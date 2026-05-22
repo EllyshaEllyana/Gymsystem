@@ -5,6 +5,32 @@ require_once '../connectdb.php';
 
 $pageTitle = 'Manage Bookings';
 
+// --- FIXED: IN-FILE CONNECTION LOGIC TO KEEP SYSTEM DATA SYNCHRONIZED ---
+if (isset($_GET['action']) && isset($_GET['id'])) {
+    $bookingId = (int)$_GET['id'];
+    $action = $_GET['action'];
+
+    if ($action === 'Approved' || $action === 'Cancelled') {
+        // Automatically syncs booking_status value to avoid breakdown in Dashboard, Reports, and Timetable
+        $stmt = $conn->prepare("UPDATE session_bookings SET booking_status = ? WHERE booking_id = ?");
+        $stmt->bind_param("si", $action, $bookingId);
+        if ($stmt->execute()) {
+            header("Location: bookings.php?msg=Booking status synchronized successfully to " . $action);
+            exit();
+        }
+    } elseif ($action === 'Delete') {
+        // Lecturer Feedback Fix: Instead of destroying row data (which breaks history/dashboards), 
+        // we set status to 'Cancelled' or remove cleanly so timetable/trainer metrics update dynamically.
+        $stmt = $conn->prepare("UPDATE session_bookings SET booking_status = 'Cancelled' WHERE booking_id = ?");
+        $stmt->bind_param("i", $bookingId);
+        if ($stmt->execute()) {
+            header("Location: bookings.php?msg=Booking removed from live timetable and schedules");
+            exit();
+        }
+    }
+}
+
+// Fetch session records cleanly with updated schema tracking
 $query = "SELECT sb.*, m.full_name, t.trainer_name 
           FROM session_bookings sb 
           JOIN members m ON sb.member_id = m.member_id 
@@ -30,7 +56,11 @@ $result = $conn->query($query);
         .btn-primary { background: #007bff; }
         .btn-success { background: #28a745; }
         .btn-danger { background: #dc3545; }
-        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; background: #e9ecef; color: #495057; }
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; background: #e9ecef; color: #495057; font-weight: bold; }
+        /* FIXED: Added styling states matching status configurations */
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-pending { background: #fff3cd; color: #856404; }
         .alert-success { padding: 10px; background: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 20px; }
     </style>
 </head>
@@ -62,11 +92,28 @@ $result = $conn->query($query);
                         <td><strong><?php echo htmlspecialchars($row['full_name']); ?></strong></td>
                         <td><?php echo htmlspecialchars($row['trainer_name']); ?></td>
                         <td><?php echo $row['session_date'] . ' | ' . $row['session_time']; ?></td>
-                        <td><span class="status-badge"><?php echo $row['booking_status']; ?></span></td>
+                        <td>
+                            <?php
+                                // Match badge design cleanly to system value configurations
+                                $badgeStyle = 'status-pending';
+                                if (strtolower($row['booking_status']) === 'approved') {
+                                    $badgeStyle = 'status-approved';
+                                } elseif (strtolower($row['booking_status']) === 'cancelled') {
+                                    $badgeStyle = 'status-cancelled';
+                                }
+                            ?>
+                            <span class="status-badge <?php echo $badgeStyle; ?>"><?php echo htmlspecialchars($row['booking_status']); ?></span>
+                        </td>
                         <td>
                             <a href="booking_edit.php?id=<?php echo $row['booking_id']; ?>" class="btn-sm btn-primary">Edit</a>
-                            <a href="booking_action.php?id=<?php echo $row['booking_id']; ?>&action=Approved" class="btn-sm btn-success">Approve</a>
-                            <a href="booking_delete.php?id=<?php echo $row['booking_id']; ?>" class="btn-sm btn-danger">Delete</a>
+                            
+                            <?php if (strtolower($row['booking_status']) !== 'approved'): ?>
+                                <a href="bookings.php?id=<?php echo $row['booking_id']; ?>&action=Approved" class="btn-sm btn-success">Approve</a>
+                            <?php else: ?>
+                                <a href="bookings.php?id=<?php echo $row['booking_id']; ?>&action=Cancelled" class="btn-sm btn-danger" style="background: #e67e22;">Cancel</a>
+                            <?php endif; ?>
+                            
+                            <a href="bookings.php?id=<?php echo $row['booking_id']; ?>&action=Delete" class="btn-sm btn-danger" onclick="return confirm('Remove booking from dashboard and schedules?')">Delete</a>
                         </td>
                     </tr>
                     <?php endwhile; ?>
