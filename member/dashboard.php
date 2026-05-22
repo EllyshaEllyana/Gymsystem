@@ -117,6 +117,8 @@ require_once __DIR__ . '/../header.php';
         <a href="trainers.php" class="btn btn-secondary"><i class="fas fa-user-tie"></i> Trainers</a>
         <a href="booking_session.php" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Book Session</a>
         <a href="timetable.php" class="btn btn-secondary"><i class="fas fa-calendar-alt"></i> My Timetable</a>
+        
+        <a href="weight_tracking.php" class="btn btn-secondary" style="background: #e67e22; color: white; border-color: #e67e22;"><i class="fas fa-weight"></i> Weight Tracking</a>
     </div>
 
     <?php if (!empty($upcomingSessions)): ?>
