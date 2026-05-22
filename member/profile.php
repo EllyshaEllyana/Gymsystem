@@ -63,72 +63,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once '../header.php';
+
 ?>
+<!-- FontAwesome for icons if your header doesn't already include it -->
+
 <link rel="stylesheet" href="profile.css">
 
-<div class="container fade-in">
-    <div class="page-header">
-        <h1><i class="fas fa-user"></i> My Profile</h1>
-        <p>View and update your personal information</p>
-    </div>
-
-    <div class="profile-page">
+<div class="profile-wrapper">
     <div class="container fade-in">
-    <div class="card" style="max-width: 600px; margin: 0 auto;">
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i> <?= htmlspecialchars($success) ?>
-            </div>
-        <?php endif; ?>
+        <div class="page-header">
+            <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+            <p>View and update your personal information</p>
+        </div>
 
-        <?php foreach ($errors as $err): ?>
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($err) ?>
-            </div>
-        <?php endforeach; ?>
-
-        <form method="POST">
-            <div class="form-group">
-                <label for="full_name">Full Name *</label>
-                <input type="text" id="full_name" name="full_name" required 
-                       value="<?= htmlspecialchars($member['full_name'] ?? '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" required 
-                       value="<?= htmlspecialchars($member['email'] ?? '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" id="phone" name="phone" 
-                       value="<?= htmlspecialchars($member['phone'] ?? '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label>Gender</label>
-                <div class="radio-group" style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                    <?php foreach (['Male', 'Female', 'Other'] as $opt): ?>
-                        <label style="font-weight: normal; cursor: pointer;">
-                            <input type="radio" name="gender" value="<?= $opt ?>" 
-                                <?= (($member['gender'] ?? '') === $opt) ? 'checked' : '' ?>> 
-                            <?= $opt ?>
-                        </label>
-                    <?php endforeach; ?>
+        <div class="card">
+            <?php if ($success): ?>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <?= htmlspecialchars($success) ?>
                 </div>
-            </div>
+            <?php endif; ?>
 
-            <div class="form-group">
-                <label>Member Since</label>
-                <input type="text" value="<?= htmlspecialchars($member['join_date'] ?? 'N/A') ?>" disabled style="background: var(--bg-secondary);">
-            </div>
+            <?php foreach ($errors as $err): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($err) ?>
+                </div>
+            <?php endforeach; ?>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
-                <i class="fas fa-save"></i> Update Profile
-            </button>
-        </form>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="full_name">Full Name *</label>
+                    <input type="text" id="full_name" name="full_name" required 
+                           value="<?= htmlspecialchars($member['full_name'] ?? '') ?>">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required 
+                           value="<?= htmlspecialchars($member['email'] ?? '') ?>">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" name="phone" 
+                           value="<?= htmlspecialchars($member['phone'] ?? '') ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="radio-group">
+                        <?php foreach (['Male', 'Female', 'Other'] as $opt): ?>
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="<?= $opt ?>" 
+                                    <?= (($member['gender'] ?? '') === $opt) ? 'checked' : '' ?>> 
+                                <span><?= $opt ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Member Since</label>
+                    <input type="text" class="disabled-input" value="<?= htmlspecialchars($member['join_date'] ?? 'N/A') ?>" disabled>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Update Profile
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
+<?php 
+require_once '../footer.php'; 
+?>
