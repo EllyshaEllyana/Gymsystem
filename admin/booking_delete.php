@@ -4,7 +4,6 @@ requireAdmin();
 require_once '../connectdb.php';  // Changed from db.php to connectdb.php
 
 $pageTitle = 'Confirm Deletion';
-p
 $bookingId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$bookingId) {
@@ -21,8 +20,16 @@ $query = "SELECT sb.*, m.full_name, t.trainer_name
           LIMIT 1";
 
 $stmt = $conn->prepare($query);
-$stmt->execute([$bookingId]);
-$booking = $stmt->fetch();
+if (!$stmt) {
+    header("Location: bookings.php");
+    exit();
+}
+
+$stmt->bind_param('i', $bookingId);
+$stmt->execute();
+$result = $stmt->get_result();
+$booking = $result ? $result->fetch_assoc() : null;
+$stmt->close();
 
 // Redirect if the record doesn't exist
 if (!$booking) {
@@ -33,17 +40,23 @@ if (!$booking) {
 // 3. Handle the actual deletion (POST request only)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deleteStmt = $conn->prepare("DELETE FROM session_bookings WHERE booking_id = ?");
-    
-    if ($deleteStmt->execute([$bookingId])) {
+    if (!$deleteStmt) {
+        header("Location: bookings.php?msg=Error+deleting+booking");
+        exit();
+    }
+
+    $deleteStmt->bind_param('i', $bookingId);
+    if ($deleteStmt->execute()) {
         $msg = urlencode("Booking deleted successfully");
         header("Location: bookings.php?msg=$msg");
     } else {
         header("Location: bookings.php?msg=Error+deleting+booking");
     }
+    $deleteStmt->close();
     exit();
 }
 
-require_once '../includes/header.php';
+require_once '../header.php';
 ?>
 
 <main class="admin-layout">
@@ -79,4 +92,4 @@ require_once '../includes/header.php';
     </section>
 </main>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once '../footer.php'; ?>

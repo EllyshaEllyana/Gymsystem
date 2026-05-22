@@ -4,14 +4,35 @@ requireAdmin();
 require_once '../connectdb.php';
 $pageTitle = 'Delete Trainer';
 
-$id = $_GET['id'] ?? 0;
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if (!$id) {
+    header("Location: trainers.php");
+    exit();
+}
+
 $stmt = $conn->prepare("SELECT * FROM trainers WHERE trainer_id = ?");
-$stmt->execute([$id]);
-$trainer = $stmt->fetch();
-if (!$trainer) { header("Location: trainers.php"); exit(); }
+if (!$stmt) {
+    header("Location: trainers.php");
+    exit();
+}
+$stmt->bind_param('i', $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$trainer = $result ? $result->fetch_assoc() : null;
+$stmt->close();
+
+if (!$trainer) {
+    header("Location: trainers.php");
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $conn->prepare("DELETE FROM trainers WHERE trainer_id = ?")->execute([$id]);
+    $deleteStmt = $conn->prepare("DELETE FROM trainers WHERE trainer_id = ?");
+    if ($deleteStmt) {
+        $deleteStmt->bind_param('i', $id);
+        $deleteStmt->execute();
+        $deleteStmt->close();
+    }
     header("Location: trainers.php?msg=Trainer deleted successfully");
     exit();
 }
