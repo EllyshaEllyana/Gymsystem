@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_payment'])) {
     if ($memberId <= 0 || $amount <= 0) {
         $errors[] = 'Please select a member and enter a valid amount.';
     } else {
-        // FIXED: Using member_id to match image_775416.png
         $stmt = $conn->prepare("INSERT INTO payments (member_id, payment_date, amount, payment_method, payment_status) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("isdss", $memberId, $paymentDate, $amount, $method, $status);
         
@@ -35,7 +34,6 @@ $memberQuery = $conn->query("SELECT member_id, full_name FROM members ORDER BY f
 $members = ($memberQuery) ? $memberQuery->fetch_all(MYSQLI_ASSOC) : [];
 
 // 3. Fetch Transaction History
-// FIXED: JOIN on member_id to ensure history displays correctly
 $historyQuery = "SELECT py.*, m.full_name 
                  FROM payments py 
                  JOIN members m ON py.member_id = m.member_id 
@@ -53,8 +51,15 @@ $history = ($historyResult) ? $historyResult->fetch_all(MYSQLI_ASSOC) : [];
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; padding: 20px; color: #333; }
         .container { max-width: 1000px; margin: auto; }
         .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        h1 { margin-bottom: 25px; font-size: 28px; }
+        
+        /* FIXED: Modified to match your clean, structured top-header positioning */
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        h1 { margin: 0; font-size: 28px; }
         h2 { font-size: 18px; margin-top: 0; margin-bottom: 20px; }
+        
+        /* FIXED: Custom style rule matching your layout structure */
+        .btn-dashboard { background: #34495e; color: white; padding: 10px 18px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold; transition: background 0.2s; }
+        .btn-dashboard:hover { background: #2c3e50; }
         
         /* Form Layout */
         .payment-form { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
@@ -71,21 +76,32 @@ $history = ($historyResult) ? $historyResult->fetch_all(MYSQLI_ASSOC) : [];
         td { padding: 12px; border-bottom: 1px solid #eee; }
         tr:hover { background: #f9f9f9; }
         
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        /* FIXED: Dynamic status design setups tracking Pending, Paid, Cancelled */
+        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
         .status-paid { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
         
         .actions a { text-decoration: none; margin-right: 10px; font-size: 14px; }
         .edit { color: #3498db; }
         .delete { color: #e74c3c; }
         .empty-msg { text-align: center; color: #7f8c8d; padding: 20px; }
+        .alert-success { padding: 12px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 20px; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Payment Management</h1>
+    
+    <div class="page-header">
+        <h1>Payment Management</h1>
+        <a href="dashboard.php" class="btn-dashboard">Back to Dashboard ↗</a>
+    </div>
 
-    <!-- 1. Quick Add Form -->
+    <?php if(isset($_GET['msg'])): ?>
+        <div class="alert-success"><?php echo htmlspecialchars($_GET['msg']); ?></div>
+    <?php endif; ?>
+
     <div class="card">
         <h2>Record New Payment</h2>
         <form class="payment-form" method="POST">
@@ -114,7 +130,6 @@ $history = ($historyResult) ? $historyResult->fetch_all(MYSQLI_ASSOC) : [];
         </form>
     </div>
 
-    <!-- 2. Transaction History Table -->
     <div class="card">
         <h2>Transaction History</h2>
         <table>
@@ -140,7 +155,18 @@ $history = ($historyResult) ? $historyResult->fetch_all(MYSQLI_ASSOC) : [];
                             <td><strong><?php echo htmlspecialchars($row['full_name']); ?></strong></td>
                             <td>RM <?php echo number_format($row['amount'], 2); ?></td>
                             <td><?php echo $row['payment_method']; ?></td>
-                            <td><span class="status-badge status-paid"><?php echo $row['payment_status']; ?></span></td>
+                            <td>
+                                <?php
+                                    // FIXED: Dynamically matches class styles against status changes
+                                    $statusClass = 'status-pending';
+                                    if ($row['payment_status'] === 'Paid') {
+                                        $statusClass = 'status-paid';
+                                    } elseif ($row['payment_status'] === 'Cancelled') {
+                                        $statusClass = 'status-cancelled';
+                                    }
+                                ?>
+                                <span class="status-badge <?php echo $statusClass; ?>"><?php echo htmlspecialchars($row['payment_status']); ?></span>
+                            </td>
                             <td class="actions">
                                 <a href="payment_edit.php?id=<?php echo $row['payment_id']; ?>" class="edit">Edit</a>
                                 <a href="payment_delete.php?id=<?php echo $row['payment_id']; ?>" class="delete" onclick="return confirm('Delete this record?')">Delete</a>
