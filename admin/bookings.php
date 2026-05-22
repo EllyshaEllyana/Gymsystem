@@ -5,13 +5,11 @@ require_once '../connectdb.php';
 
 $pageTitle = 'Manage Bookings';
 
-// --- FIXED: IN-FILE CONNECTION LOGIC TO KEEP SYSTEM DATA SYNCHRONIZED ---
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $bookingId = (int)$_GET['id'];
     $action = $_GET['action'];
 
     if ($action === 'Approved' || $action === 'Cancelled') {
-        // Automatically syncs booking_status value to avoid breakdown in Dashboard, Reports, and Timetable
         $stmt = $conn->prepare("UPDATE session_bookings SET booking_status = ? WHERE booking_id = ?");
         $stmt->bind_param("si", $action, $bookingId);
         if ($stmt->execute()) {
@@ -19,8 +17,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             exit();
         }
     } elseif ($action === 'Delete') {
-        // Lecturer Feedback Fix: Instead of destroying row data (which breaks history/dashboards), 
-        // we set status to 'Cancelled' or remove cleanly so timetable/trainer metrics update dynamically.
         $stmt = $conn->prepare("UPDATE session_bookings SET booking_status = 'Cancelled' WHERE booking_id = ?");
         $stmt->bind_param("i", $bookingId);
         if ($stmt->execute()) {
@@ -30,7 +26,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     }
 }
 
-// Fetch session records cleanly with updated schema tracking
 $query = "SELECT sb.*, m.full_name, t.trainer_name 
           FROM session_bookings sb 
           JOIN members m ON sb.member_id = m.member_id 
@@ -48,7 +43,9 @@ $result = $conn->query($query);
     <style>
         body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
         .admin-content { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h1 { color: #333; margin: 0; }
+        /* Style for the new header row layout */
+        .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         th { background-color: #f8f9fa; color: #555; }
@@ -56,8 +53,10 @@ $result = $conn->query($query);
         .btn-primary { background: #007bff; }
         .btn-success { background: #28a745; }
         .btn-danger { background: #dc3545; }
+        /* Style for the dashboard shortcut link */
+        .btn-dashboard { background: #34495e; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
+        .btn-dashboard:hover { background: #2c3e50; }
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; background: #e9ecef; color: #495057; font-weight: bold; }
-        /* FIXED: Added styling states matching status configurations */
         .status-approved { background: #d4edda; color: #155724; }
         .status-cancelled { background: #f8d7da; color: #721c24; }
         .status-pending { background: #fff3cd; color: #856404; }
@@ -68,12 +67,14 @@ $result = $conn->query($query);
 
 <div class="admin-layout">
     <div class="admin-content">
-        <div class="page-header">
+        <div class="header-container">
             <h1>Bookings Management</h1>
-            <?php if(isset($_GET['msg'])): ?>
-                <div class="alert-success"><?php echo htmlspecialchars($_GET['msg']); ?></div>
-            <?php endif; ?>
+            <a href="dashboard.php" class="btn-dashboard">Back to Dashboard ↗</a>
         </div>
+
+        <?php if(isset($_GET['msg'])): ?>
+            <div class="alert-success"><?php echo htmlspecialchars($_GET['msg']); ?></div>
+        <?php endif; ?>
 
         <table>
             <thead>
@@ -94,7 +95,6 @@ $result = $conn->query($query);
                         <td><?php echo $row['session_date'] . ' | ' . $row['session_time']; ?></td>
                         <td>
                             <?php
-                                // Match badge design cleanly to system value configurations
                                 $badgeStyle = 'status-pending';
                                 if (strtolower($row['booking_status']) === 'approved') {
                                     $badgeStyle = 'status-approved';
