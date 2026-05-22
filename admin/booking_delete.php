@@ -37,9 +37,11 @@ if (!$booking) {
     exit();
 }
 
-// 3. Handle the actual deletion (POST request only)
+// 3. Handle the automatic synchronization (POST request only)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $deleteStmt = $conn->prepare("DELETE FROM session_bookings WHERE booking_id = ?");
+    // FIXED: Replaced hard DELETE query with status UPDATE 'Cancelled'
+    // This allows timetables, trainer schedules, and dashboards to drop data automatically without losing log context.
+    $deleteStmt = $conn->prepare("UPDATE session_bookings SET booking_status = 'Cancelled' WHERE booking_id = ?");
     if (!$deleteStmt) {
         header("Location: bookings.php?msg=Error+deleting+booking");
         exit();
