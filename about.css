@@ -1,0 +1,910 @@
+/* =========================================================
+   ABOUT PAGE - FITZONE
+========================================================= */
+
+:root {
+    --brand-blue-start: #2563eb;
+    --brand-blue-end: #1d4ed8;
+    --brand-navy: #1e3a8a;
+
+    --bg-page: #f8fafc;
+    --bg-card: rgba(255,255,255,0.92);
+
+    --text-main: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+
+    --border-color: #e2e8f0;
+
+    --radius: 22px;
+
+    --shadow-sm:
+        0 4px 6px -1px rgba(15,23,42,0.04),
+        0 2px 4px -1px rgba(15,23,42,0.02);
+
+    --shadow-lg:
+        0 20px 25px -5px rgba(15,23,42,0.08),
+        0 10px 10px -5px rgba(15,23,42,0.04);
+
+    --transition: all 0.3s ease;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+    background:
+        linear-gradient(to bottom right, #f8fafc, #eef4ff);
+
+    font-family: 'Inter', system-ui, sans-serif;
+
+    margin: 0;
+    padding: 0;
+
+    color: var(--text-main);
+}
+
+/* =========================================================
+   ABOUT SECTION
+========================================================= */
+
+.about-section {
+    max-width: 1150px;
+
+    margin: 4rem auto;
+
+    padding: 3rem;
+
+    background: var(--bg-card);
+
+    backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(226,232,240,0.7);
+
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-lg);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+/* Decorative Glow */
+
+.about-section::before {
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    background:
+        radial-gradient(
+            rgba(37,99,235,0.12),
+            transparent 70%
+        );
+
+    top: -100px;
+    right: -100px;
+
+    border-radius: 50%;
+}
+
+/* =========================================================
+   TITLES
+========================================================= */
+
+.about-section h1 {
+    font-size: 3rem;
+
+    font-weight: 800;
+
+    color: var(--brand-navy);
+
+    margin-bottom: 1.5rem;
+
+    letter-spacing: -0.03em;
+
+    position: relative;
+    z-index: 2;
+}
+
+.about-section h2 {
+    font-size: 1.6rem;
+
+    font-weight: 700;
+
+    color: var(--brand-blue-start);
+
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================================================
+   PARAGRAPHS
+========================================================= */
+
+.about-section p {
+    font-size: 1rem;
+
+    line-height: 1.9;
+
+    color: var(--text-secondary);
+
+    margin-bottom: 1.2rem;
+
+    position: relative;
+    z-index: 2;
+}
+
+.about-section strong {
+    color: var(--brand-blue-start);
+}
+
+/* =========================================================
+   FEATURES GRID
+========================================================= */
+
+.features-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(250px, 1fr));
+
+    gap: 1.5rem;
+
+    margin-top: 2rem;
+}
+
+/* =========================================================
+   FEATURE CARD
+========================================================= */
+
+.feature-card {
+    background: rgba(255,255,255,0.9);
+
+    border: 1px solid rgba(226,232,240,0.7);
+
+    border-radius: 20px;
+
+    padding: 2rem 1.6rem;
+
+    text-align: center;
+
+    transition: var(--transition);
+
+    box-shadow: var(--shadow-sm);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+/* Hover Effect */
+
+.feature-card::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,0.05),
+            transparent 60%
+        );
+
+    opacity: 0;
+
+    transition: 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow: var(--shadow-lg);
+
+    border-color: rgba(37,99,235,0.2);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.feature-card .icon {
+    width: 78px;
+    height: 78px;
+
+    margin: 0 auto 1.3rem;
+
+    border-radius: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #dbeafe
+        );
+
+    color: var(--brand-blue-start);
+
+    font-size: 1.7rem;
+
+    transition: var(--transition);
+}
+
+.feature-card:hover .icon {
+    transform: scale(1.08) rotate(3deg);
+}
+
+/* =========================================================
+   FEATURE TEXT
+========================================================= */
+
+.feature-card h3 {
+    font-size: 1.2rem;
+
+    font-weight: 700;
+
+    color: var(--brand-navy);
+
+    margin-bottom: 0.8rem;
+}
+
+.feature-card p {
+    color: var(--text-muted);
+
+    font-size: 0.95rem;
+
+    line-height: 1.7;
+
+    margin: 0;
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+.fade-in {
+    animation:
+        fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .about-section {
+        margin: 3rem 1.5rem;
+        padding: 2.5rem;
+    }
+
+    .about-section h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .about-section {
+        margin: 2rem 1rem;
+        padding: 2rem 1.5rem;
+    }
+
+    .about-section h1 {
+        font-size: 2rem;
+    }
+
+    .about-section h2 {
+        font-size: 1.4rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-card {
+        padding: 1.8rem 1.4rem;
+    }
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.site-header,
+header,
+.navbar {
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+
+    width: 100%;
+
+    background:
+        rgba(255,255,255,0.95) !important;
+
+    backdrop-filter: blur(12px);
+
+    border-bottom:
+        1px solid var(--border-color);
+
+    box-shadow:
+        0 4px 6px -1px rgba(15,23,42,0.04),
+        0 2px 4px -1px rgba(15,23,42,0.02);
+}
+
+/* =========================================================
+   NAV CONTAINER
+========================================================= */
+
+.nav-container {
+    max-width: 1320px;
+
+    margin: 0 auto;
+
+    padding: 0.95rem 2rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 2rem;
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo,
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+
+    text-decoration: none !important;
+}
+
+.logo-icon {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--brand-blue-start),
+            var(--brand-blue-end)
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ffffff;
+
+    font-size: 1.2rem;
+
+    box-shadow:
+        0 10px 20px rgba(37,99,235,0.22);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-title {
+    font-size: 1.1rem;
+
+    font-weight: 800;
+
+    color: var(--brand-navy);
+
+    line-height: 1.1;
+}
+
+.logo-subtitle {
+    margin-top: 0.2rem;
+
+    font-size: 0.78rem;
+
+    color: var(--text-muted);
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.nav-menu,
+header ul,
+nav ul {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.4rem;
+
+    list-style: none;
+
+    margin: 0;
+    padding: 0;
+}
+
+/* =========================================================
+   NAV LINKS
+========================================================= */
+
+.nav-link,
+header ul li a,
+nav ul li a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.75rem 1rem;
+
+    border-radius: 12px;
+
+    text-decoration: none !important;
+
+    color: var(--text-muted) !important;
+
+    font-size: 0.92rem;
+
+    font-weight: 600;
+
+    transition:
+        all 0.25s ease;
+}
+
+/* Hover */
+
+.nav-link:hover,
+header ul li a:hover,
+nav ul li a:hover {
+    background:
+        rgba(37,99,235,0.08);
+
+    color: var(--primary) !important;
+
+    transform: translateY(-1px);
+}
+
+/* Active */
+
+.nav-link.active,
+header ul li a.active,
+nav ul li a.active {
+    background:
+        linear-gradient(
+            135deg,
+            var(--brand-blue-start),
+            var(--brand-blue-end)
+        );
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 10px 20px rgba(37,99,235,0.18);
+}
+
+/* =========================================================
+   NAV ACTIONS
+========================================================= */
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+/* =========================================================
+   PROFILE BUTTON
+========================================================= */
+
+.profile-btn {
+    width: 44px;
+    height: 44px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #dbeafe
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    color: var(--primary);
+
+    transition:
+        all 0.25s ease;
+}
+
+.profile-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 20px rgba(37,99,235,0.15);
+}
+
+/* =========================================================
+   LOGOUT BUTTON
+========================================================= */
+
+.logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.75rem 1rem;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--brand-blue-start),
+            var(--brand-blue-end)
+        );
+
+    color: #ffffff !important;
+
+    text-decoration: none;
+
+    font-size: 0.9rem;
+
+    font-weight: 700;
+
+    transition:
+        all 0.25s ease;
+
+    box-shadow:
+        0 10px 20px rgba(37,99,235,0.18);
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 24px rgba(37,99,235,0.24);
+}
+
+/* =========================================================
+   ADMIN HEADER AUTO SWITCH
+========================================================= */
+
+.admin-layout .site-header,
+.admin-layout header,
+.admin-layout .navbar {
+    background:
+        rgba(15,23,42,0.96) !important;
+
+    border-bottom:
+        1px solid #1e293b;
+}
+
+.admin-layout .logo-title,
+.admin-layout .nav-link,
+.admin-layout header ul li a,
+.admin-layout nav ul li a {
+    color: #cbd5e1 !important;
+}
+
+.admin-layout .nav-link:hover,
+.admin-layout header ul li a:hover,
+.admin-layout nav ul li a:hover {
+    background:
+        rgba(255,255,255,0.06);
+
+    color: #ffffff !important;
+}
+
+.admin-layout .nav-link.active,
+.admin-layout header ul li a.active,
+.admin-layout nav ul li a.active {
+    background:
+        linear-gradient(
+            135deg,
+            #334155,
+            #1e293b
+        );
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.site-footer,
+footer {
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #111827
+        );
+
+    color: #94a3b8;
+
+    padding: 4rem 2rem 2rem;
+
+    margin-top: auto;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-top:
+        1px solid #1e293b;
+}
+
+/* Decorative Circle */
+
+.site-footer::before,
+footer::before {
+    content: "";
+
+    position: absolute;
+
+    width: 340px;
+    height: 340px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    top: -160px;
+    right: -120px;
+}
+
+/* =========================================================
+   FOOTER CONTAINER
+========================================================= */
+
+.footer-container {
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================================================
+   FOOTER GRID
+========================================================= */
+
+.footer-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 2.5rem;
+
+    margin-bottom: 2rem;
+}
+
+/* =========================================================
+   FOOTER TITLES
+========================================================= */
+
+.footer-brand h2,
+.footer-links h3,
+.footer-contact h3,
+footer h3,
+footer h4 {
+    color: #ffffff;
+
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+
+    font-size: 1.1rem;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   FOOTER TEXT
+========================================================= */
+
+.footer-brand p,
+footer p {
+    line-height: 1.8;
+
+    color: #94a3b8;
+}
+
+/* =========================================================
+   FOOTER LINKS
+========================================================= */
+
+.footer-links ul,
+.footer-contact ul {
+    list-style: none;
+
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li,
+.footer-contact li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-links a,
+.footer-contact a,
+footer a {
+    color: #94a3b8;
+
+    text-decoration: none;
+
+    transition:
+        all 0.25s ease;
+}
+
+.footer-links a:hover,
+.footer-contact a:hover,
+footer a:hover {
+    color: #3b82f6;
+
+    padding-left: 4px;
+}
+
+/* =========================================================
+   SOCIAL ICONS
+========================================================= */
+
+.footer-social,
+.social-icons {
+    display: flex;
+
+    gap: 0.8rem;
+
+    margin-top: 1rem;
+}
+
+.footer-social a,
+.social-icons a {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,0.08);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ffffff !important;
+
+    transition:
+        all 0.25s ease;
+}
+
+.footer-social a:hover,
+.social-icons a:hover {
+    transform: translateY(-3px);
+
+    background:
+        #2563eb;
+}
+
+/* =========================================================
+   FOOTER BOTTOM
+========================================================= */
+
+.footer-bottom {
+    padding-top: 1.5rem;
+
+    border-top:
+        1px solid rgba(255,255,255,0.08);
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 0.85rem;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .nav-container {
+        padding: 1rem 1.5rem;
+    }
+
+    .nav-menu,
+    header ul,
+    nav ul {
+        gap: 0.2rem;
+    }
+
+    .nav-link,
+    header ul li a,
+    nav ul li a {
+        padding: 0.7rem 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .nav-container {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 1rem;
+    }
+
+    .nav-menu,
+    header ul,
+    nav ul {
+        flex-wrap: wrap;
+
+        width: 100%;
+    }
+
+    .nav-link,
+    header ul li a,
+    nav ul li a {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+    .site-footer,
+    footer {
+        padding: 3rem 1rem 1.5rem;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}

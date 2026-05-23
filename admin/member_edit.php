@@ -27,20 +27,19 @@ $packages = ($packagesResult) ? $packagesResult->fetch_all(MYSQLI_ASSOC) : [];
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fullName = trim($_POST['full_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $gender = $_POST['gender'] ?? 'Male';
+    // Keep personal information intact from the database instead of user form manipulation
+    $fullName = $member['full_name'];
+    $email = $member['email'];
+    $phone = $member['phone'];
+    $gender = $member['gender'];
+    
+    // Admin is allowed to edit these fields:
     $packageId = $_POST['package_id'] ?? null;
     $status = $_POST['status'] ?? 'active';
     $expiryDate = $_POST['expiry_date'] ?? null;
 
-    if (empty($fullName) || empty($email)) {
-        $errors[] = 'Name and email are required.';
-    }
-
     if (empty($errors)) {
-        // Prepare the UPDATE statement (Note: we use user_id in the WHERE clause)
+        // Prepare the UPDATE statement (Updates membership details seamlessly)
         $updateStmt = $conn->prepare("UPDATE members SET full_name=?, email=?, phone=?, gender=?, package_id=?, status=?, expiry_date=? WHERE user_id=?");
         
         // Handle potential null for package_id
@@ -64,11 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .form-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 5px; font-weight: bold; }
     input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-    .radio-group { display: flex; gap: 15px; padding: 10px 0; }
+    input[readonly] { background-color: #e9ecef; color: #6c757d; cursor: not-allowed; }
+    .radio-group { display: flex; gap: 15px; padding: 10px 0; color: #6c757d; }
     .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; text-decoration: none; display: inline-block; }
     .btn-primary { background: #3498db; }
     .btn-secondary { background: #95a5a6; }
     .alert-danger { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+    .info-note { background: #e8f4fd; color: #2c3e50; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.9em; border-left: 4px solid #3498db; }
 </style>
 
 <div class="container">
@@ -76,34 +77,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>Updating information for: <strong><?php echo htmlspecialchars($member['full_name']); ?></strong></p>
     <hr>
 
+    <div class="info-note">
+        <strong>Notice:</strong> As an Administrator, personal profile data is read-only. You are permitted to manage membership packages, status allocations, and expiry schedules.
+    </div>
+
     <?php foreach ($errors as $err): ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($err); ?></div>
     <?php endforeach; ?>
 
     <form method="POST">
         <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" name="full_name" required value="<?php echo htmlspecialchars($member['full_name']); ?>">
+            <label>Full Name</label>
+            <input type="text" readonly value="<?php echo htmlspecialchars($member['full_name']); ?>">
         </div>
 
         <div class="form-group">
-            <label>Email *</label>
-            <input type="email" name="email" required value="<?php echo htmlspecialchars($member['email']); ?>">
+            <label>Email</label>
+            <input type="email" readonly value="<?php echo htmlspecialchars($member['email']); ?>">
         </div>
 
         <div class="form-group">
             <label>Phone</label>
-            <input type="text" name="phone" value="<?php echo htmlspecialchars($member['phone']); ?>">
+            <input type="text" readonly value="<?php echo htmlspecialchars($member['phone']); ?>">
         </div>
 
         <div class="form-group">
             <label>Gender</label>
             <div class="radio-group">
-                <label><input type="radio" name="gender" value="Male" <?php echo $member['gender'] === 'Male' ? 'checked' : ''; ?>> Male</label>
-                <label><input type="radio" name="gender" value="Female" <?php echo $member['gender'] === 'Female' ? 'checked' : ''; ?>> Female</label>
-                <label><input type="radio" name="gender" value="Other" <?php echo $member['gender'] === 'Other' ? 'checked' : ''; ?>> Other</label>
+                <label><input type="radio" disabled <?php echo $member['gender'] === 'Male' ? 'checked' : ''; ?>> Male</label>
+                <label><input type="radio" disabled <?php echo $member['gender'] === 'Female' ? 'checked' : ''; ?>> Female</label>
+                <label><input type="radio" disabled <?php echo $member['gender'] === 'Other' ? 'checked' : ''; ?>> Other</label>
             </div>
         </div>
+
+        <hr style="border: 0; border-top: 1px dashed #ddd; margin: 25px 0;">
 
         <div class="form-group">
             <label>Package</label>
@@ -131,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div style="margin-top: 20px;">
-            <button type="submit" class="btn btn-primary">Update Member</button>
+            <button type="submit" class="btn btn-primary">Update Package Changes</button>
             <a href="members.php" class="btn btn-secondary">Cancel</a>
         </div>
     </form>

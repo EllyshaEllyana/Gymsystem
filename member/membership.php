@@ -1,0 +1,138 @@
+<?php
+require_once '../auth.php';       
+requireMember();
+require_once '../connectdb.php'; 
+
+$pageTitle = 'Membership Details';
+$userId = $_SESSION['user_id'];
+$success = '';
+
+$getMemberData = function($conn, $id) {
+    $sql = "SELECT m.*, p.package_name, p.duration, p.price 
+            FROM members m 
+            LEFT JOIN membership_packages p ON m.package_id = p.package_id 
+            WHERE m.user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $member = $result ? $result->fetch_assoc() : null;
+    $stmt->close();
+    return $member;
+};
+
+$member = $getMemberData($conn, $userId) ?: [];
+$packagesResult = $conn->query("SELECT * FROM membership_packages");
+$packages = $packagesResult ? $packagesResult->fetch_all(MYSQLI_ASSOC) : [];
+
+// Simple mapping of package_id => image (use existing pictures folder)
+$packageImages = [
+    1 => '../picture/WhatsApp Image 2026-05-22 at 9.27.41 PM.jpeg',
+    2 => '../picture/WhatsApp Image 2026-05-22 at 9.27.42 PM.jpeg',
+    3 => '../picture/WhatsApp Image 2026-05-22 at 9.27.43 PM.jpeg'
+];
+
+// Handle Membership Renewal
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['renew_package'])) {
+    $pkgId = (int)$_POST['renew_package'];
+
+    // Fetch selected package details
+    $pkgStmt = $conn->prepare("SELECT * FROM membership_packages WHERE package_id = ?");
+    $pkgStmt->bind_param("i", $pkgId);
+    $pkgStmt->execute();
+    $pkgResult = $pkgStmt->get_result();
+    $pkgData = $pkgResult ? $pkgResult->fetch_assoc() : null;
+    $pkgStmt->close();
+
+    if ($pkgData && $member) {
+        $newExpiry = date('Y-m-d', strtotime("+" . $pkgData['duration'] . " months"));
+
+        // Update Member Record
+        $updateStmt = $conn->prepare("UPDATE members SET package_id = ?, status = 'active', expiry_date = ? WHERE member_id = ?");
+        $updateStmt->bind_param("isi", $pkgId, $newExpiry, $member['member_id']);
+        $updateStmt->execute();
+        $updateStmt->close();
+
+        // Record Payment
+        $payStmt = $conn->prepare("INSERT INTO payments (member_id, payment_date, amount, payment_method, payment_status) VALUES (?, CURDATE(), ?, 'Online', 'Paid')");
+        $payStmt->bind_param("id", $member['member_id'], $pkgData['price']);
+        $payStmt->execute();
+        $payStmt->close();
+
+        $success = 'Membership renewed successfully!';
+
+        // Refresh member data for display
+        $member = $getMemberData($conn, $userId);
+    }
+}
+
+require_once '../header.php';
+?>
+
+<link rel="stylesheet" href="membership.css?">
+
+<div class="container fade-in">
+    <div class="page-header">
+        <h1><i class="fas fa-box"></i> Membership Details</h1>
+        <p>View your current membership details and renew or update your plan below.</p>
+    </div>
+
+    <?php if ($success): ?>
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> <?= $success ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="card" style="max-width: 600px; margin-bottom: 2rem;">
+        <h3>Current Membership</h3>
+        <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+            <div>
+                <p class="text-label">Package</p>
+                <p class="text-value"><?= htmlspecialchars($member['package_name'] ?? 'None') ?></p>
+            </div>
+            <div>
+                <p class="text-label">Status</p>
+                <p>
+                    <span class="badge <?= (($member['status'] ?? '') === 'active') ? 'badge-success' : 'badge-danger' ?>">
+                        <?= ucfirst($member['status'] ?? 'unknown') ?>
+                    </span>
+                </p>
+            </div>
+            <div>
+                <p class="text-label">Duration</p>
+                <p class="text-value"><?= ($member['duration'] ?? '-') ?> Month(s)</p>
+            </div>
+            <div>
+                <p class="text-label">Expires</p>
+                <p class="text-value"><?= $member['expiry_date'] ?? 'N/A' ?></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="max-width: 600px;">
+        <h3>Change Package</h3>
+        <div class="features-grid">
+            <?php foreach ($packages as $p): ?>
+                <div class="package-item" style="display:flex;align-items:center;gap:12px;justify-content:space-between;">
+                    <div style="display:flex;gap:12px;align-items:center;">
+                        <div style="width:110px;flex-shrink:0;">
+                            <img src="<?php echo htmlspecialchars($packageImages[$p['package_id']] ?? '../picture/WhatsApp Image 2026-05-22 at 9.27.44 PM.jpeg'); ?>" alt="<?= htmlspecialchars($p['package_name']) ?>" style="width:100%;height:72px;object-fit:cover;border-radius:6px;">
+                        </div>
+                        <div>
+                            <h4 style="margin:0"><?= htmlspecialchars($p['package_name']) ?></h4>
+                            <p class="package-meta" style="margin:4px 0 0 0;">
+                                <?= $p['duration'] ?> Month<?= $p['duration'] > 1 ? 's' : '' ?> — 
+                                <strong>RM <?= number_format($p['price'], 2) ?></strong>
+                            </p>
+                        </div>
+                    </div>
+                    <form method="POST" style="margin: 0;">
+                        <button type="submit" name="renew_package" value="<?= $p['package_id'] ?>" class="btn btn-sm btn-primary">
+                            <i class="fas fa-sync-alt"></i> Select
+                        </button>
+                    </form>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
