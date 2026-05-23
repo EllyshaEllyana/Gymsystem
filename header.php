@@ -12,7 +12,9 @@
     
     <?php if (!isset($baseUrl)) { $baseUrl = '/Gymsystem'; } ?>
     <link rel="stylesheet" href="<?php echo $baseUrl; ?>/assets/css/style.css">
-    
+    <?php if (strpos($_SERVER['SCRIPT_NAME'], '/admin/') !== false): ?>
+        <link rel="stylesheet" href="<?php echo $baseUrl; ?>/admin/dashboard.css">
+    <?php endif; ?>
     <?php if (!empty($pageStyles) && is_array($pageStyles)): ?>
         <?php foreach ($pageStyles as $style): ?>
             <link rel="stylesheet" href="<?php echo $baseUrl; ?>/<?php echo htmlspecialchars($style); ?>">

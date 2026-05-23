@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2026 at 03:48 PM
+-- Generation Time: May 23, 2026 at 04:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,6 +39,14 @@ CREATE TABLE `members` (
   `status` enum('active','expired') NOT NULL DEFAULT 'active',
   `expiry_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `members`
+--
+
+INSERT INTO `members` (`member_id`, `user_id`, `full_name`, `email`, `phone`, `gender`, `join_date`, `package_id`, `status`, `expiry_date`) VALUES
+(5, 21, 'Faiz', 'faizadham9@gmail.com', '01123456789', 'Female', '2026-05-10', 1, 'active', '2026-06-15'),
+(9, 25, 'Faizzzz', 'faizadham123@gmail.com', '0182803834', 'Female', '2026-05-18', 3, 'active', '2026-11-18');
 
 -- --------------------------------------------------------
 
@@ -77,6 +85,15 @@ CREATE TABLE `payments` (
   `payment_status` enum('Paid','Pending','Cancelled') NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`payment_id`, `member_id`, `payment_date`, `amount`, `payment_method`, `payment_status`) VALUES
+(5, 5, '2026-05-15', 250.00, 'Online', 'Paid'),
+(18, 9, '2026-05-18', 250.00, 'Online', 'Paid'),
+(19, 9, '2026-05-18', 450.00, 'Online', 'Paid');
+
 -- --------------------------------------------------------
 
 --
@@ -94,6 +111,14 @@ CREATE TABLE `session_bookings` (
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `session_bookings`
+--
+
+INSERT INTO `session_bookings` (`booking_id`, `member_id`, `trainer_id`, `session_date`, `session_time`, `session_type`, `booking_status`, `notes`, `created_at`) VALUES
+(8, 9, 3, '2026-05-19', '9:00 AM', 'Strength', 'Approved', 'losing weight', '2026-05-18 01:32:56'),
+(9, 9, 3, '2026-05-20', '1:00 PM', 'Weight Loss', 'Pending', '', '2026-05-18 01:55:28');
 
 -- --------------------------------------------------------
 
@@ -120,11 +145,7 @@ INSERT INTO `trainers` (`trainer_id`, `trainer_name`, `specialization`, `availab
 (1, 'Ahmad Rizal', 'Strength Training', 'Mon, Tue, Wed, Thu, Fri', '8:00 AM - 12:00 PM', '012-3456789', 'Available', 80.00),
 (2, 'Sarah Tan', 'Cardio & HIIT', 'Mon, Wed, Fri, Sat', '2:00 PM - 6:00 PM', '013-9876543', 'Available', 70.00),
 (3, 'David Lee', 'Weight Loss', 'Tue, Thu, Sat', '9:00 AM - 1:00 PM', '011-2345678', 'Available', 75.00),
-(4, 'Nurul Aisyah', 'Rehabilitation', 'Mon, Tue, Wed, Thu, Fri', '10:00 AM - 4:00 PM', '014-5678901', 'Available', 90.00),
-(5, 'Ahmad Rizal', 'Strength Training', 'Mon, Tue, Wed, Thu, Fri', '8:00 AM - 12:00 PM', '012-3456789', 'Available', 80.00),
-(6, 'Sarah Tan', 'Cardio & HIIT', 'Mon, Wed, Fri, Sat', '2:00 PM - 6:00 PM', '013-9876543', 'Available', 70.00),
-(7, 'David Lee', 'Weight Loss', 'Tue, Thu, Sat', '9:00 AM - 1:00 PM', '011-2345678', 'Available', 75.00),
-(8, 'Nurul Aisyah', 'Rehabilitation', 'Mon, Tue, Wed, Thu, Fri', '10:00 AM - 4:00 PM', '014-5678901', 'Available', 90.00);
+(4, 'Nurul Aisyah', 'Rehabilitation', 'Mon, Tue, Wed, Thu, Fri', '10:00 AM - 4:00 PM', '014-5678901', 'Available', 90.00);
 
 -- --------------------------------------------------------
 
@@ -146,7 +167,29 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role`, `created_at`) VALUES
-(1, 'admin', 'admin@gym.com', '$2y$10$s4Lq2O88.yOwVj2JReqiXeBBs5Wr8kv6whXCJAjWCz8veCEJ.LZ9C', 'admin', '2026-05-02 13:21:19');
+(1, 'admin', 'admin@gym.com', '$2y$10$s4Lq2O88.yOwVj2JReqiXeBBs5Wr8kv6whXCJAjWCz8veCEJ.LZ9C', 'admin', '2026-05-02 13:21:19'),
+(21, 'faizzadham', 'faizadham9@gmail.com', '$2y$10$IrbFJ3bbpWmjTR/hvEdHpuMf3VeRZJ7qXhEIw01RVP62X38V3RAl.', 'member', '2026-05-10 03:45:41'),
+(25, 'liverflop', 'faizadham123@gmail.com', '$2y$10$ST7uK7CzGKiIVBlnVGre4emBuHzhvlik6kiLIsl0G4h6sA.pmqSMG', 'member', '2026-05-18 01:22:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `weight_progress`
+--
+
+CREATE TABLE `weight_progress` (
+  `weight_id` int(11) NOT NULL,
+  `member_id` int(11) NOT NULL,
+  `weight` decimal(5,2) NOT NULL,
+  `record_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `weight_progress`
+--
+
+INSERT INTO `weight_progress` (`weight_id`, `member_id`, `weight`, `record_date`) VALUES
+(1, 5, 67.00, '2026-05-23');
 
 --
 -- Indexes for dumped tables
@@ -196,6 +239,13 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `weight_progress`
+--
+ALTER TABLE `weight_progress`
+  ADD PRIMARY KEY (`weight_id`),
+  ADD KEY `member_id` (`member_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -203,25 +253,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `membership_packages`
 --
 ALTER TABLE `membership_packages`
-  MODIFY `package_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `package_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `session_bookings`
 --
 ALTER TABLE `session_bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `trainers`
@@ -233,7 +283,13 @@ ALTER TABLE `trainers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT for table `weight_progress`
+--
+ALTER TABLE `weight_progress`
+  MODIFY `weight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -258,6 +314,12 @@ ALTER TABLE `payments`
 ALTER TABLE `session_bookings`
   ADD CONSTRAINT `session_bookings_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `session_bookings_ibfk_2` FOREIGN KEY (`trainer_id`) REFERENCES `trainers` (`trainer_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `weight_progress`
+--
+ALTER TABLE `weight_progress`
+  ADD CONSTRAINT `fk_weight_member` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

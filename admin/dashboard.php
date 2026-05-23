@@ -79,8 +79,6 @@ $recentBookings = $result->fetch_all(MYSQLI_ASSOC);
 require_once '../header.php';
 ?>
 
-<link rel="stylesheet" href="dashboard.css">
-
 <div class="admin-layout">
     <?php include 'sidebar.php'; ?>
     

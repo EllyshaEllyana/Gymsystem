@@ -53,7 +53,7 @@ require_once '../header.php';
                             <td><span class="badge <?php echo $t['status']==='Available'?'badge-success':'badge-warning'; ?>"><?php echo $t['status']; ?></span></td>
                             <td>
                                 <div class="btn-group">
-                                    <a href="trainer_edit.php?id=<?php echo $t['trainer_id']; ?>" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>
+                                    <a href="trainer_edit.php?id=<?php echo $t['trainer_id']; ?>" class="btn btn-sm btn-secondary"><i class="fas fa-pen-to-square"></i></a>
                                     <a href="trainer_delete.php?id=<?php echo $t['trainer_id']; ?>" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
                                 </div>
                             </td>

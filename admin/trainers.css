@@ -125,10 +125,14 @@ aside {
     border: none;
 }
 
+.btn i {
+    color: inherit;
+}
+
 .btn-primary {
     background-color: var(--primary-color);
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 4px 10px rgba(13, 5, 239, 0.25);
 }
 
 .btn-primary:hover {
@@ -142,12 +146,16 @@ aside {
 }
 
 .btn-secondary {
-    background-color: #334155;
-    color: var(--text-primary);
+    background-color: #0f70f8;
+    color: var(--text-primary) !important;
 }
 
 .btn-secondary:hover {
-    background-color: #475569;
+    background-color: #095fd6;
+}
+
+.btn-secondary i {
+    color: inherit !important;
 }
 
 .btn-danger {
@@ -164,7 +172,9 @@ aside {
 .btn-group {
     display: flex;
     gap: 0.5rem;
+    color: rgb(255, 255, 255, 0.9);
 }
+
 
 /* TABLE CONTAINER & STYLE */
 .table-wrapper {

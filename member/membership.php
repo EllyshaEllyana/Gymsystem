@@ -25,6 +25,13 @@ $member = $getMemberData($conn, $userId) ?: [];
 $packagesResult = $conn->query("SELECT * FROM membership_packages");
 $packages = $packagesResult ? $packagesResult->fetch_all(MYSQLI_ASSOC) : [];
 
+// Simple mapping of package_id => image (use existing pictures folder)
+$packageImages = [
+    1 => '../picture/WhatsApp Image 2026-05-22 at 9.27.41 PM.jpeg',
+    2 => '../picture/WhatsApp Image 2026-05-22 at 9.27.42 PM.jpeg',
+    3 => '../picture/WhatsApp Image 2026-05-22 at 9.27.43 PM.jpeg'
+];
+
 // Handle Membership Renewal
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['renew_package'])) {
     $pkgId = (int)$_POST['renew_package'];
@@ -106,13 +113,18 @@ require_once '../header.php';
         <h3>Change Package</h3>
         <div class="features-grid">
             <?php foreach ($packages as $p): ?>
-                <div class="package-item">
-                    <div>
-                        <h4><?= htmlspecialchars($p['package_name']) ?></h4>
-                        <p class="package-meta">
-                            <?= $p['duration'] ?> Month<?= $p['duration'] > 1 ? 's' : '' ?> — 
-                            <strong>RM <?= number_format($p['price'], 2) ?></strong>
-                        </p>
+                <div class="package-item" style="display:flex;align-items:center;gap:12px;justify-content:space-between;">
+                    <div style="display:flex;gap:12px;align-items:center;">
+                        <div style="width:110px;flex-shrink:0;">
+                            <img src="<?php echo htmlspecialchars($packageImages[$p['package_id']] ?? '../picture/WhatsApp Image 2026-05-22 at 9.27.44 PM.jpeg'); ?>" alt="<?= htmlspecialchars($p['package_name']) ?>" style="width:100%;height:72px;object-fit:cover;border-radius:6px;">
+                        </div>
+                        <div>
+                            <h4 style="margin:0"><?= htmlspecialchars($p['package_name']) ?></h4>
+                            <p class="package-meta" style="margin:4px 0 0 0;">
+                                <?= $p['duration'] ?> Month<?= $p['duration'] > 1 ? 's' : '' ?> — 
+                                <strong>RM <?= number_format($p['price'], 2) ?></strong>
+                            </p>
+                        </div>
                     </div>
                     <form method="POST" style="margin: 0;">
                         <button type="submit" name="renew_package" value="<?= $p['package_id'] ?>" class="btn btn-sm btn-primary">

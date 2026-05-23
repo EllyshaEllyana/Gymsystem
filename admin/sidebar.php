@@ -1,4 +1,9 @@
 <div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-mark">GY</div>
+        <div class="brand-title">Admin Panel</div>
+    </div>
+
     <div class="sidebar-label">Main</div>
     <ul class="sidebar-menu">
         <li>
@@ -30,12 +35,12 @@
     <div class="sidebar-label">Personal Training</div>
     <ul class="sidebar-menu">
         <li>
-            <a href="trainers.php" class="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['trainers.php','trainer_add.php','trainer_edit.php']) ? 'active' : ''; ?>">
+            <a href="trainers.php" class="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['trainers.php','trainer_add.php','trainer_edit.php','trainer_delete.php']) ? 'active' : ''; ?>">
                 <i class="fas fa-user-tie"></i> Trainers
             </a>
         </li>
         <li>
-            <a href="bookings.php" class="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['bookings.php','booking_edit.php']) ? 'active' : ''; ?>">
+            <a href="bookings.php" class="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['bookings.php','booking_edit.php','booking_delete.php']) ? 'active' : ''; ?>">
                 <i class="fas fa-calendar-check"></i> Bookings
             </a>
         </li>
